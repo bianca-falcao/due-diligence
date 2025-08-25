@@ -2,6 +2,9 @@
 
 App em **Streamlit** para consultas de Pessoas Politicamente Expostas (PEPs), Pessoas Físicas, Pessoas Jurídicas e Mídia Negativa usando o **Portal da Transparência** e buscas avançadas no Google.
 
+<img width="614" height="364" alt="image" src="https://github.com/user-attachments/assets/dfd96e55-c7b7-4b6a-831a-a4ea27799e00" />
+
+
 ---
 
 ## Funcionalidades
@@ -93,5 +96,6 @@ due-diligence/
 
 ## Licença
 MIT License
+
 
 
