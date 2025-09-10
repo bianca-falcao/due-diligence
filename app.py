@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import urllib.parse
 
-API_KEY = "SUA_CHAVE_API"
+API_KEY = "st.secrets["api_keys"]["API_KEY"]"
 
 st.set_page_config(page_title="🔎 Diligência", layout="wide")
 st.title("🔎 Diligência")
@@ -205,3 +205,4 @@ elif menu == "Listas Restritivas Nacionais e Internacionais":
                 )
         else:
             st.warning("Digite um termo antes de buscar.")
+
