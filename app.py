@@ -2,8 +2,12 @@ import streamlit as st
 import requests
 import re
 import urllib.parse
+from typing import Any, Dict, Optional
 
-API_KEY = st.secrets["api_keys"]["API_KEY"]
+# =========================
+# Config / Helpers
+# =========================
+API_KEY = st.secrets["api_keys"]["API_KEY"].strip()
 
 DEFAULT_HEADERS = {
     "chave-api-dados": API_KEY,
@@ -247,7 +251,6 @@ elif menu == "Listas Restritivas Nacionais e Internacionais":
                 st.link_button(f"🔎 {nome}", url=url_google)
         else:
             st.warning("Digite um termo antes de buscar.")
-
 
 
 
