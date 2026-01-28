@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import re
 import urllib.parse
 
 API_KEY = st.secrets["api_keys"]["API_KEY"]
@@ -14,28 +15,48 @@ if menu == "Pessoa Politicamente Exposta":
     st.header("🧑🏻‍💼 Pessoa Politicamente Exposta")
     BASE_URL_PEP = "https://api.portaldatransparencia.gov.br/api-de-dados/peps"
 
-    cpf = st.text_input("Digite o CPF (sem dígitos):")
+    cpf = st.text_input("Digite o CPF (apenas números, 11 dígitos):")
 
     if st.button("Consultar"):
-        headers = {"chave-api-dados": API_KEY}
-        params = {"cpf": cpf, "pagina": 1}
-        response = requests.get(BASE_URL_PEP, headers=headers, params=params)
-
-        if response.status_code == 200:
-            data = response.json()
-            if data:  
-                st.success(f"✅ {len(data)} PEP(s) encontrado(s)!")
-                
-                for pep in data:  
-                    st.write(f"**Nome:** {pep.get('nome', 'Não informado')}")
-                    st.write(f"**Função:** {pep.get('descricao_funcao', 'Não informado')}")
-                    st.write(f"**Órgão:** {pep.get('nome_orgao', 'Não informado')}")
-                    st.write(f"**Início do exercício:** {pep.get('dt_inicio_exercicio', 'Não informado')}")
-                    st.markdown("---")
-            else:
-                st.info("🔴 Nenhum PEP encontrado.")
+        cpf_limpo = re.sub(r"\D", "", cpf)
+        if not cpf_limpo:
+            st.warning("Digite um CPF para consultar.")
+        elif len(cpf_limpo) != 11:
+            st.warning("O CPF deve conter 11 dígitos numéricos.")
         else:
-            st.error("❌ Erro na requisição à API.")
+            headers = {"chave-api-dados": API_KEY}
+            params = {"cpf": cpf_limpo, "pagina": 1}
+            try:
+                response = requests.get(
+                    BASE_URL_PEP,
+                    headers=headers,
+                    params=params,
+                    timeout=15,
+                )
+                if response.status_code == 200:
+                    data = response.json()
+                    if data:
+                        st.success(f"✅ {len(data)} PEP(s) encontrado(s)!")
+
+                        for pep in data:
+                            st.write(f"**Nome:** {pep.get('nome', 'Não informado')}")
+                            st.write(
+                                f"**Função:** {pep.get('descricao_funcao', 'Não informado')}"
+                            )
+                            st.write(f"**Órgão:** {pep.get('nome_orgao', 'Não informado')}")
+                            st.write(
+                                f"**Início do exercício:** {pep.get('dt_inicio_exercicio', 'Não informado')}"
+                            )
+                            st.markdown("---")
+                    else:
+                        st.info("🔴 Nenhum PEP encontrado.")
+                else:
+                    st.error(
+                        "❌ Erro na requisição à API. "
+                        f"Status {response.status_code}: {response.text}"
+                    )
+            except requests.RequestException as exc:
+                st.error(f"❌ Erro ao conectar na API: {exc}")
 elif menu == "Pessoa Física":
     BASE_URL_PF = "https://api.portaldatransparencia.gov.br/api-de-dados/pessoa-fisica"
 
